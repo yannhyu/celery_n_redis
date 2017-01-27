@@ -1,0 +1,15 @@
+Understanding celery worker -A celery_blog -l info -c 5
+"-c 5" means that we set the concurrency as 5. So celery can run 5 parallel sub-processes. Each sub-process can act on a single task.
+"-l info" means we want celery to be verbose with its output.
+"-A celery_blog" tells that celery configuration, which includes the app and the tasks celery worker should be aware of, is kept in module celery_blog.py
+
+Understanding the output
+Celery worker is running 5 sub-processes simulataneously which it calls Worker-1, Worker-2 and so on.
+It's not necessary that tasks' will be fetched in exactly the same order as they were in list.
+When we ran python celery_blog.py, tasks were created and put in the message queue i.e redis.
+celery worker running on another terminal, talked with redis and fetched the tasks from queue.
+celery worker deserialized each individual task and made each individual task run within a sub-process.
+
+celery worker did not wait for first task/sub-process to finish before acting on second task.
+While first task is still being executed in a sub-process, celery worker fetched second task, deserialized it and gave it to another sub-process.
+That's why our output is mixed up, i.e four tasks have started. But before 5th task could start, we got the result from 1st task, i.e the "200" you are seeing.

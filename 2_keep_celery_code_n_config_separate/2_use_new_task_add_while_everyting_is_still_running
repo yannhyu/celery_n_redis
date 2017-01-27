@@ -1,0 +1,4 @@
+Use the new task add
+
+from celery_add import add
+add.delay(4, 5)

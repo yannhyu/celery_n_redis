@@ -1,0 +1,69 @@
+
+
+Start three terminals
+
+On first terminal, run redis using redis-server.
+On second terminal, run celery worker using celery worker -A celery_blog -l info -c 5. By seeing the output, you will be able to tell that celery is running.
+On third terminal, run your script, python celery_blog.py.
+
+Unlike last execution of your script, you will not see any output on "python celery_blog.py" terminal. It is because the actual work of hitting the url isn't being done by your script anymore, it will be done by celery.
+
++++++++++++++++++++++++++++++++++++++++++++++++
+
+celery -A celery_blog worker --loglevel=INFO
+
++++++++++++++++++++++++++++++++++++++++++++++++
+
+(data_pipelines) yann.yu@mllxv-yu:without_celery$ python no_celery_blog.py 
+200
+200
+200
+200
+200
+It took 2.695101499557495 seconds
+(data_pipelines) yann.yu@mllxv-yu:without_celery$ cd ..
+(data_pipelines) yann.yu@mllxv-yu:celery_n_redis$ python use_celery/celery_blog.py 
+(data_pipelines) yann.yu@mllxv-yu:celery_n_redis$ python use_celery/celery_blog.py 
+(data_pipelines) yann.yu@mllxv-yu:celery_n_redis$ 
+
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+(data_pipelines) yann.yu@mllxv-yu:use_celery$ celery -A celery_blog worker --loglevel=INFO
+ 
+ -------------- celery@mllxv-yu v4.0.2 (latentcall)
+---- **** ----- 
+--- * ***  * -- Linux-4.4.0-59-generic-x86_64-with-Ubuntu-16.04-xenial 2017-01-24 10:23:35
+-- * - **** --- 
+- ** ---------- [config]
+- ** ---------- .> app:         celery_blog:0x7fa5a3336fd0
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     disabled://
+- *** --- * --- .> concurrency: 2 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . celery_blog.fetch_url
+
+[2017-01-24 10:23:35,067: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2017-01-24 10:23:35,074: INFO/MainProcess] mingle: searching for neighbors
+[2017-01-24 10:23:36,087: INFO/MainProcess] mingle: all alone
+[2017-01-24 10:23:36,092: INFO/MainProcess] celery@mllxv-yu ready.
+[2017-01-24 10:24:02,806: INFO/MainProcess] Received task: celery_blog.fetch_url[22ca1582-6a0e-4534-9359-3377eeb0eb81]  
+[2017-01-24 10:24:02,814: INFO/MainProcess] Received task: celery_blog.fetch_url[3b448042-bb43-4915-a065-5bc29105dd37]  
+[2017-01-24 10:24:02,816: INFO/MainProcess] Received task: celery_blog.fetch_url[8178801f-1950-45bc-94b8-cbcb1d1ff26c]  
+[2017-01-24 10:24:02,822: INFO/MainProcess] Received task: celery_blog.fetch_url[f7d403a0-f417-4006-8667-8dd7477973d9]  
+[2017-01-24 10:24:02,823: INFO/MainProcess] Received task: celery_blog.fetch_url[317ae8ed-9d6e-4f6a-bb61-f25322c59546]  
+[2017-01-24 10:24:02,885: WARNING/PoolWorker-2] 200
+[2017-01-24 10:24:02,885: INFO/PoolWorker-2] Task celery_blog.fetch_url[22ca1582-6a0e-4534-9359-3377eeb0eb81] succeeded in 0.07800281498930417s: None
+[2017-01-24 10:24:03,349: WARNING/PoolWorker-2] 200
+[2017-01-24 10:24:03,350: INFO/PoolWorker-2] Task celery_blog.fetch_url[8178801f-1950-45bc-94b8-cbcb1d1ff26c] succeeded in 0.4638014189986279s: None
+[2017-01-24 10:24:03,599: WARNING/PoolWorker-2] 200
+[2017-01-24 10:24:03,599: INFO/PoolWorker-2] Task celery_blog.fetch_url[f7d403a0-f417-4006-8667-8dd7477973d9] succeeded in 0.24816280299273785s: None
+[2017-01-24 10:24:03,939: WARNING/PoolWorker-2] 200
+[2017-01-24 10:24:03,939: INFO/PoolWorker-2] Task celery_blog.fetch_url[317ae8ed-9d6e-4f6a-bb61-f25322c59546] succeeded in 0.3392854740086477s: None
+[2017-01-24 10:24:04,134: WARNING/PoolWorker-1] 200
+[2017-01-24 10:24:04,135: INFO/PoolWorker-1] Task celery_blog.fetch_url[3b448042-bb43-4915-a065-5bc29105dd37] succeeded in 1.318654504008009s: None

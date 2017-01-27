@@ -1,0 +1,88 @@
+
+run 
+"celery worker -A celery_config -l info -c 5"
+
+
+Start ipython and issue "func":
+
+from celery_blog import func
+func(['https://google.com', 'https://facebook.com'])
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+(data_pipelines) yann.yu@mllxv-yu:2_keep_celery_code_n_config_separate$ celery worker -A celery_config -l info -c 5
+ 
+ -------------- celery@mllxv-yu v4.0.2 (latentcall)
+---- **** ----- 
+--- * ***  * -- Linux-4.4.0-59-generic-x86_64-with-Ubuntu-16.04-xenial 2017-01-24 10:51:21
+-- * - **** --- 
+- ** ---------- [config]
+- ** ---------- .> app:         celery_config:0x7fd6d77baef0
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     disabled://
+- *** --- * --- .> concurrency: 5 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . celery_blog.fetch_url
+
+[2017-01-24 10:51:21,755: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2017-01-24 10:51:21,762: INFO/MainProcess] mingle: searching for neighbors
+[2017-01-24 10:51:22,782: INFO/MainProcess] mingle: all alone
+[2017-01-24 10:51:22,786: INFO/MainProcess] celery@mllxv-yu ready.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+(data_pipelines) yann.yu@mllxv-yu:2_keep_celery_code_n_config_separate$ ipython
+Python 3.5.2 (default, Nov 17 2016, 17:05:23) 
+Type "copyright", "credits" or "license" for more information.
+
+IPython 5.1.0 -- An enhanced Interactive Python.
+?         -> Introduction and overview of IPython's features.
+%quickref -> Quick reference.
+help      -> Python's own help system.
+object?   -> Details about 'object', use 'object??' for extra details.
+
+In [1]: from celery_blog import func
+
+In [2]: func(['https://google.com', 'https://facebook.com'])
+
+In [3]: 
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+(data_pipelines) yann.yu@mllxv-yu:2_keep_celery_code_n_config_separate$ celery worker -A celery_config -l info -c 5
+ 
+ -------------- celery@mllxv-yu v4.0.2 (latentcall)
+---- **** ----- 
+--- * ***  * -- Linux-4.4.0-59-generic-x86_64-with-Ubuntu-16.04-xenial 2017-01-24 10:51:21
+-- * - **** --- 
+- ** ---------- [config]
+- ** ---------- .> app:         celery_config:0x7fd6d77baef0
+- ** ---------- .> transport:   redis://localhost:6379/0
+- ** ---------- .> results:     disabled://
+- *** --- * --- .> concurrency: 5 (prefork)
+-- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+--- ***** ----- 
+ -------------- [queues]
+                .> celery           exchange=celery(direct) key=celery
+                
+
+[tasks]
+  . celery_blog.fetch_url
+
+[2017-01-24 10:51:21,755: INFO/MainProcess] Connected to redis://localhost:6379/0
+[2017-01-24 10:51:21,762: INFO/MainProcess] mingle: searching for neighbors
+[2017-01-24 10:51:22,782: INFO/MainProcess] mingle: all alone
+[2017-01-24 10:51:22,786: INFO/MainProcess] celery@mllxv-yu ready.
+[2017-01-24 10:52:03,190: INFO/MainProcess] Received task: celery_blog.fetch_url[c8289b06-922f-4295-8afe-4d5228bb4efe]  
+[2017-01-24 10:52:03,191: INFO/MainProcess] Received task: celery_blog.fetch_url[542b3118-6e9e-4c0d-a6b0-7a703e3d9934]  
+[2017-01-24 10:52:03,304: WARNING/PoolWorker-5] 200
+[2017-01-24 10:52:03,305: INFO/PoolWorker-5] Task celery_blog.fetch_url[c8289b06-922f-4295-8afe-4d5228bb4efe] succeeded in 0.1145919389964547s: None
+[2017-01-24 10:52:03,651: WARNING/PoolWorker-3] 200
+[2017-01-24 10:52:03,652: INFO/PoolWorker-3] Task celery_blog.fetch_url[542b3118-6e9e-4c0d-a6b0-7a703e3d9934] succeeded in 0.45975458600150887s: None
+
